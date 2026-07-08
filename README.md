@@ -51,5 +51,4 @@ SELECT Parsed.MatchIndex                                 AS [ID],         -- П�
 FROM        src                                                               
 CROSS APPLY dbo.RegexMatches(src.LogData, 'User:\w+') AS Parsed;          -- Находим все блоки 'User:...'
 */
-
 '''
