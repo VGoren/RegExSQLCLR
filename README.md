@@ -50,5 +50,4 @@ SELECT Parsed.MatchIndex                                 AS [ID],         -- П�
        dbo.RegexIsMatch(Parsed.Value, '[0-9]')           AS [Has_Digits]  -- Флаг: есть ли цифры в этом блоке
 FROM        src                                                               
 CROSS APPLY dbo.RegexMatches(src.LogData, 'User:\w+') AS Parsed;          -- Находим все блоки 'User:...'
-*/
-'''
+*/'''
