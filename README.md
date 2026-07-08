@@ -15,7 +15,7 @@ IF OBJECT_ID('dbo.RegexGroup')   IS NOT NULL DROP FUNCTION dbo.RegexGroup;
 IF OBJECT_ID('dbo.RegexReplace') IS NOT NULL DROP FUNCTION dbo.RegexReplace;
 IF OBJECT_ID('dbo.RegexMatch')   IS NOT NULL DROP FUNCTION dbo.RegexMatch;
 IF OBJECT_ID('dbo.RegexIsMatch') IS NOT NULL DROP FUNCTION dbo.RegexIsMatch;
-DROP ASSEMBLY [SqlRegEx];
+DROP ASSEMBLY [RegExSQLCLR];
 
 -- Установка (Binary Deployment)
 CREATE ASSEMBLY [RegExSQLCLR]
@@ -24,17 +24,17 @@ WITH PERMISSION_SET = SAFE
 GO
 
 -- Накатываем функции
-CREATE FUNCTION dbo.RegexIsMatch(@input nvarchar(max), @pattern nvarchar(max))                     RETURNS bit                             AS EXTERNAL NAME [SqlRegEx].[SqlRegEx].[RegexIsMatch] -- True/False совпадение
+CREATE FUNCTION dbo.RegexIsMatch(@input nvarchar(max), @pattern nvarchar(max))                     RETURNS bit                             AS EXTERNAL NAME [RegExSQLCLR].[RegExSQLCLR].[RegexIsMatch] -- True/False совпадение
 GO                                                                                                                                                                                               
-CREATE FUNCTION dbo.RegexMatch  (@input nvarchar(max), @pattern nvarchar(max))                     RETURNS nvarchar(max)                   AS EXTERNAL NAME [SqlRegEx].[SqlRegEx].[RegexMatch]   -- Первое вхождение
+CREATE FUNCTION dbo.RegexMatch  (@input nvarchar(max), @pattern nvarchar(max))                     RETURNS nvarchar(max)                   AS EXTERNAL NAME [RegExSQLCLR].[RegExSQLCLR].[RegexMatch]   -- Первое вхождение
 GO                                                                                                                                                                                               
-CREATE FUNCTION dbo.RegexReplace(@input nvarchar(max), @pattern nvarchar(max), @rep nvarchar(max)) RETURNS nvarchar(max)                   AS EXTERNAL NAME [SqlRegEx].[SqlRegEx].[RegexReplace] -- Замена всех вхождений
+CREATE FUNCTION dbo.RegexReplace(@input nvarchar(max), @pattern nvarchar(max), @rep nvarchar(max)) RETURNS nvarchar(max)                   AS EXTERNAL NAME [RegExSQLCLR].[RegExSQLCLR].[RegexReplace] -- Замена всех вхождений
 GO                                                                                                                                                                                               
-CREATE FUNCTION dbo.RegexGroup  (@input nvarchar(max), @pattern nvarchar(max), @idx int          ) RETURNS nvarchar(max)                   AS EXTERNAL NAME [SqlRegEx].[SqlRegEx].[RegexGroup]   -- Захват скобочной группы
+CREATE FUNCTION dbo.RegexGroup  (@input nvarchar(max), @pattern nvarchar(max), @idx int          ) RETURNS nvarchar(max)                   AS EXTERNAL NAME [RegExSQLCLR].[RegExSQLCLR].[RegexGroup]   -- Захват скобочной группы
 GO                                                                                                                                                                                               
 CREATE FUNCTION dbo.RegexMatches(@input nvarchar(max), @pattern nvarchar(max))                     RETURNS TABLE(MatchIndex int,                                                                 
                                                                                                                  Value      nvarchar(max),                                                       
-                                                                                                                 Length     int)           AS EXTERNAL NAME [SqlRegEx].[SqlRegEx].[RegexMatches] -- Ссылка на: Сборка.Класс.Метод
+                                                                                                                 Length     int)           AS EXTERNAL NAME [RegExSQLCLR].[RegExSQLCLR].[RegexMatches] -- Ссылка на: Сборка.Класс.Метод
 GO
 
 -- Пример использования
