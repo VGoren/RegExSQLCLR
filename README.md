@@ -24,31 +24,32 @@ WITH PERMISSION_SET = SAFE
 GO
 
 -- Накатываем функции
-CREATE FUNCTION dbo.RegexIsMatch(@input nvarchar(max), @pattern nvarchar(max))                     RETURNS bit                             AS EXTERNAL NAME [RegExSQLCLR].[RegExSQLCLR].[RegexIsMatch] -- True/False совпадение
+CREATE FUNCTION dbo.RegexIsMatch(@input nvarchar(max), @pattern nvarchar(max))                     RETURNS bit                             AS EXTERNAL NAME [RegExSQLCLR].[RegEx].[RegexIsMatch] -- True/False совпадение
 GO                                                                                                                                                                                               
-CREATE FUNCTION dbo.RegexMatch  (@input nvarchar(max), @pattern nvarchar(max))                     RETURNS nvarchar(max)                   AS EXTERNAL NAME [RegExSQLCLR].[RegExSQLCLR].[RegexMatch]   -- Первое вхождение
+CREATE FUNCTION dbo.RegexMatch  (@input nvarchar(max), @pattern nvarchar(max))                     RETURNS nvarchar(max)                   AS EXTERNAL NAME [RegExSQLCLR].[RegEx].[RegexMatch]   -- Первое вхождение
 GO                                                                                                                                                                                               
-CREATE FUNCTION dbo.RegexReplace(@input nvarchar(max), @pattern nvarchar(max), @rep nvarchar(max)) RETURNS nvarchar(max)                   AS EXTERNAL NAME [RegExSQLCLR].[RegExSQLCLR].[RegexReplace] -- Замена всех вхождений
+CREATE FUNCTION dbo.RegexReplace(@input nvarchar(max), @pattern nvarchar(max), @rep nvarchar(max)) RETURNS nvarchar(max)                   AS EXTERNAL NAME [RegExSQLCLR].[RegEx].[RegexReplace] -- Замена всех вхождений
 GO                                                                                                                                                                                               
-CREATE FUNCTION dbo.RegexGroup  (@input nvarchar(max), @pattern nvarchar(max), @idx int          ) RETURNS nvarchar(max)                   AS EXTERNAL NAME [RegExSQLCLR].[RegExSQLCLR].[RegexGroup]   -- Захват скобочной группы
+CREATE FUNCTION dbo.RegexGroup  (@input nvarchar(max), @pattern nvarchar(max), @idx int          ) RETURNS nvarchar(max)                   AS EXTERNAL NAME [RegExSQLCLR].[RegEx].[RegexGroup]   -- Захват скобочной группы
 GO                                                                                                                                                                                               
 CREATE FUNCTION dbo.RegexMatches(@input nvarchar(max), @pattern nvarchar(max))                     RETURNS TABLE(MatchIndex int,                                                                 
                                                                                                                  Value      nvarchar(max),                                                       
-                                                                                                                 Length     int)           AS EXTERNAL NAME [RegExSQLCLR].[RegExSQLCLR].[RegexMatches] -- Ссылка на: Сборка.Класс.Метод
+                                                                                                                 Length     int)           AS EXTERNAL NAME [RegExSQLCLR].[RegEx].[RegexMatches] -- Ссылка на: Сборка.Класс.Метод
 GO
 
 -- Пример использования
 /*
-SELECT
-    Parsed.MatchIndex                                 AS [ID],         -- Порядковый индекс совпадения
-    Parsed.Value                                      AS [Full_Block], -- Блок целиком (например, 'User:Ivan')
-    dbo.RegexGroup  (Parsed.Value, 'User:(\w+)', 1)   AS [UserName],   -- Извлекаем имя через скобочную группу
-    dbo.RegexReplace(Parsed.Value, '.*:', '')         AS [After_Col],  -- Удаляем всё до двоеточия через Replace
-    dbo.RegexIsMatch(Parsed.Value, '[0-9]')           AS [Has_Digits]  -- Флаг: есть ли цифры в этом блоке
-FROM (                                                                 
-    SELECT 'User:Admin; User:Ivan123; User:Guest;'    AS LogData       
-) AS src                                                               
-CROSS APPLY dbo.RegexMatches(src.LogData, 'User:\w+') AS Parsed;       -- Находим все блоки 'User:...'
+WITH src AS
+(
+    SELECT 'User:Admin; User:Ivan123; User:Guest;' AS LogData 
+)
+SELECT Parsed.MatchIndex                                 AS [ID],         -- Порядковый индекс совпадения
+       Parsed.Value                                      AS [Full_Block], -- Блок целиком (например, 'User:Ivan')
+       dbo.RegexGroup  (Parsed.Value, 'User:(\w+)', 1)   AS [UserName],   -- Извлекаем имя через скобочную группу
+       dbo.RegexReplace(Parsed.Value, '.*:', '')         AS [After_Col],  -- Удаляем всё до двоеточия через Replace
+       dbo.RegexIsMatch(Parsed.Value, '[0-9]')           AS [Has_Digits]  -- Флаг: есть ли цифры в этом блоке
+FROM        src                                                               
+CROSS APPLY dbo.RegexMatches(src.LogData, 'User:\w+') AS Parsed;          -- Находим все блоки 'User:...'
 */
 
 '''
